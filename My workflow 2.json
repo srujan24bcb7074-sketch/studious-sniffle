@@ -1,0 +1,459 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "name": "documents",
+        "topK": 3
+      },
+      "id": "0f4eff65-18b0-4ca6-a702-e80682a3a595",
+      "name": "Vector Store Tool",
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "2ae6e182-05e8-4210-ac61-d62fc843df48",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        736
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data }}",
+        "options": {}
+      },
+      "id": "32f6b2b1-6c6e-4b41-995c-ec6689f4b272",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 100,
+        "options": {}
+      },
+      "id": "aeef1316-6225-4e10-b2cc-e0a2d563ea5f",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1664,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:v1.5"
+      },
+      "id": "c67f7471-4b81-42e1-8794-0cdad3763e7a",
+      "name": "Embeddings Ollama1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        928
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an assistant that always responds in the second person.  \nYou will be given an input inside {{ $json.chatInput }}.  \nYour task is to understand the input, retrieve the most relevant information to answer it, and respond directly to the user.  \nDo not explain how you retrieved the information or mention any tools used.  \nAlways keep your answers natural, conversational, and directed at \"you\".\n\nExamples:  \nInput: \"How can I improve workout recovery?\"  \nOutput: \"You can speed up recovery by focusing on proper sleep, hydration, and balanced nutrition with enough protein.\"  \n\nInput: \"Explain cloud computing simply.\"  \nOutput: \"You can think of cloud computing as renting computers and storage over the internet instead of owning them yourself.\"  \n\nNow process this input:  \n{{ $json.chatInput }}\n",
+        "options": {
+          "systemMessage": "use the vector store tool to answer the questions"
+        }
+      },
+      "id": "3c6c4972-90cf-4ead-bbcd-33aef85d3f9b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1040,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:v1.5"
+      },
+      "id": "8dee4be0-9e7e-421e-a33a-5514921b57e8",
+      "name": "Embeddings Ollama",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        544
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        176
+      ],
+      "id": "78a33457-48cf-40c6-853d-9f8b79f73d98",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1248,
+        368
+      ],
+      "id": "64c88dc5-8c78-4244-9078-a6a7d5036e6d",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "PuDyh2cOGyj0vXnF",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "embeddingBatchSize": 150,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        736
+      ],
+      "id": "dd0b5379-8dda-4a79-bd2c-8f417efa7877",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "PuDyh2cOGyj0vXnF",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        912,
+        176
+      ],
+      "id": "fdd3c433-4709-41e5-b19c-afd3f3208a4c",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        368
+      ],
+      "id": "6d1472cc-2eea-4b31-ac31-967ddd16053e",
+      "name": "Ollama Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1MNI8qoXy-cg11fgBgRFaPmcekokFdTOn",
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1MNI8qoXy-cg11fgBgRFaPmcekokFdTOn"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        880,
+        736
+      ],
+      "id": "950a51c5-b327-4973-9eda-2365d95ac11d",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "78pdWg2ZWsqKus3B",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "18mkN2NEeJZ8q-ODkp2nvTbIUnPVTzEL9",
+          "mode": "list",
+          "cachedResultName": "FAQ.txt",
+          "cachedResultUrl": "https://drive.google.com/file/d/18mkN2NEeJZ8q-ODkp2nvTbIUnPVTzEL9/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1088,
+        736
+      ],
+      "id": "4974dc63-2562-49ae-987c-09a698366051",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "78pdWg2ZWsqKus3B",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        -32
+      ],
+      "id": "47558ad3-9327-42c7-b74e-9cf2050e9bb6",
+      "name": "When chat message received",
+      "webhookId": "cf096ef2-64ba-422c-ab6f-6bc0ebe6db58"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Vector Store Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Vector Store Tool",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "296a017d-2d1b-40aa-a5e5-080384704e60",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "8Yxzu7bf64xdKCeo",
+  "tags": []
+}
